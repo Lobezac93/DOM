@@ -1,112 +1,115 @@
+//============Part 1==============
+
+const mainEl = document.querySelector("main")
+mainEl.style.backgroundColor = "var(--main-bg)";
+mainEl.innerHTML = "<h1>DOM Manipulation</h1>";
+
+mainEl.setAttribute("class", "flex-ctr");
+//===========Part 2=============
+const topMenuEl = document.getElementById("top-menu");
+topMenuEl.style.height = "100%";
+topMenuEl.style.backgroundColor = "var(--top-menu-bg)";
+topMenuEl.setAttribute("class", "flex-around");
+//===========Adding Menu Buttons==============
+// Old menu data structure
+// var menuLinks = [
+//     { text: 'about', href: '/about' },
+//     { text: 'catalog', href: '/catalog' },
+//     { text: 'orders', href: '/orders' },
+//     { text: 'account', href: '/account' },
+// ];
+
+//Updated Menu data structure for part two use 
 var menuLinks = [
-    { text: "about", href: "/about" },
-    {
-      text: "catalog",
-      href: "#",
-      subLinks: [
-        { text: "all", href: "/catalog/all" },
-        { text: "top selling", href: "/catalog/top" },
-        { text: "search", href: "/catalog/search" },
-      ],
-    },
-    {
-      text: "orders",
-      href: "#",
-      subLinks: [
-        { text: "new", href: "/orders/new" },
-        { text: "pending", href: "/orders/pending" },
-        { text: "history", href: "/orders/history" },
-      ],
-    },
-    {
-      text: "account",
-      href: "#",
-      subLinks: [
-        { text: "profile", href: "/account/profile" },
-        { text: "sign out", href: "/account/signout" },
-      ],
-    },
-  ];
-  
-  // Select and cache the top menu element
-  const topMenuEl = document.getElementById("top-menu");
-  
-  // loops over the array to Create and append menu links to the navbar
-  menuLinks.forEach((link) => {
-    const a = document.createElement("a");
-    a.setAttribute("href", link.href);
-    a.textContent = link.text;
-    topMenuEl.appendChild(a);
-  });
-  
-  // Style the top menu
-  topMenuEl.style.height = "100%";
-  topMenuEl.style.backgroundColor = "var(--top-menu-bg)";
-  topMenuEl.classList.add("flex-around");
-  
-  // Select and cache the <main> element
-  const mainEl = document.querySelector("main");
-  
-  // Set the background color using the CSS custom property
-  mainEl.style.backgroundColor = "var(--main-bg)";
-  
-  // Set the content of <main> to <h1>DOM Manipulation</h1>
-  mainEl.innerHTML = "<h1>DOM Manipulation</h1>";
-  
-  // Add a class of 'flex-ctr' to <main>
-  mainEl.classList.add("flex-ctr");
-  
-  // Part 3: Creating and Styling Submenu
-  const subMenuEl = document.getElementById("sub-menu");
-  subMenuEl.style.height = "100%";
-  subMenuEl.style.backgroundColor = "var(--sub-menu-bg)"; // Fixed CSS custom property syntax
-  subMenuEl.classList.add("flex-around");
-  subMenuEl.style.position = "absolute";
-  subMenuEl.style.top = "0";
-  
-  // Add a single event listener to topMenuEl for menu interactions
-  topMenuEl.addEventListener('click', (event) => {
-    event.preventDefault();
-    if (event.target.tagName !== 'A') return;
-  
-    // Handle the top menu link activation
-    const link = menuLinks.find(link => link.text === event.target.textContent);
-    if (!link) return;
-  
-    // Toggle active class on the clicked link
-    topMenuEl.querySelectorAll('a').forEach(link => link.classList.remove('active'));
-    event.target.classList.add('active');
-  
-    // Show or hide the submenu
-    if (link.subLinks) {
-      subMenuEl.style.top = '100%';
-      buildSubmenu(link.subLinks);
-    } else {
-      subMenuEl.style.top = '0';
-      subMenuEl.innerHTML = ''; // Clear submenu if no subLinks
+  { text: "about", href: "/about" },
+  {
+    text: "catalog",
+    href: "#",
+    subLinks: [
+      { text: "all", href: "/catalog/all" },
+      { text: "top selling", href: "/catalog/top" },
+      { text: "search", href: "/catalog/search" },
+    ],
+  },
+  {
+    text: "orders",
+    href: "#",
+    subLinks: [
+      { text: "new", href: "/orders/new" },
+      { text: "pending", href: "/orders/pending" },
+      { text: "history", href: "/orders/history" },
+    ],
+  },
+  {
+    text: "account",
+    href: "#",
+    subLinks: [
+      { text: "profile", href: "/account/profile" },
+      { text: "sign out", href: "/account/signout" },
+    ],
+  },
+];
+//adding the menuLink to the navBar
+menuLinks.forEach((link) => {
+  const a = document.createElement("a");
+  a.setAttribute("href", link.href);
+  a.textContent = link.text;
+  topMenuEl.appendChild(a);
+});
+//========Part 3 - Adding interactivity===========
+const subMenuEl = document.getElementById("sub-menu");
+subMenuEl.style.height = "100%";
+subMenuEl.style.backgroundColor = "var(--sub-menu-bg)";
+subMenuEl.setAttribute("class", "flex-around");
+subMenuEl.style.position = "absolute";
+subMenuEl.style.top = 0;
+// Grabbing all topMenuEl <a> elements
+const topMenuLinks = document.querySelectorAll("a");
+//Add EventListener
+topMenuEl.addEventListener("click", function (e) {
+  e.preventDefault();
+  //The second line of code of the function should immediately return if the element clicked was not an <a> element.
+  if (!e.target.matches("a")) {
+    return;
+  }
+  console.log(e.target.textContent);
+  //The event listener should add the active class to the <a> element that was clicked, unless it was already active, in which case it should remove it.
+  e.target.classList.toggle("active");
+  //The event listener should remove the active class from each other <a> element in topMenuLinks - whether the active class exists or not.
+  topMenuLinks.forEach((link) => {
+    if (link !== e.target) {
+      link.classList.remove("active");
     }
   });
-  
-  // Build the submenu from the given subLinks array
-  function buildSubmenu(subLinks) {
-    subMenuEl.innerHTML = ''; // Clear existing contents
-    subLinks.forEach(subLink => {
-      const a = document.createElement('a');
-      a.href = subLink.href;
-      a.textContent = subLink.text;
+  //===Part 5 - Adding Submenu Interaction===
+  //Within the event listener, if the clicked <a> element does not yet have a class of "active" (it was inactive when clicked):
+  //If the clicked <a> element's "link" object within menuLinks has a subLinks property (all do, except for the "link" object for ABOUT), set the CSS top property of subMenuEl to 100%.
+  //Otherwise, set the CSS top property of subMenuEl to 0.
+  //Hint: Caching the "link" object will come in handy for passing its subLinks array later.
+  const clickedLink = menuLinks.find(
+    (link) => link.text === e.target.textContent
+  );
+  if (e.target.classList.contains("active") && clickedLink.subLinks) {
+    subMenuEl.style.top = "100%";
+    buildSubMenu(clickedLink.subLinks);
+  } else {
+    if (!clickedLink.subLinks) {
+      subMenuEl.style.top = 0;
+    }
+  }
+  function buildSubMenu(subLinks) {
+    //Clear the current contents of subMenuEl.
+    subMenuEl.innerHTML = "";
+    //Iterate over the subLinks array, passed as an argument, and for each "link" object:
+    subLinks.forEach((link) => {
+      //Create an <a> element.
+      const a = document.createElement("a");
+      //Add an href attribute to the <a>, with the value set by the href property of the "link" object.
+      a.setAttribute("href", link.href);
+      //Set the element's content to the value of the text property of the "link" object.
+      a.textContent = link.text;
+      //Append the new element to the subMenuEl.
       subMenuEl.appendChild(a);
     });
   }
-  
-  // Add a delegated event listener to the submenu for submenu interactions
-  subMenuEl.addEventListener('click', (event) => {
-    event.preventDefault();
-    if (event.target.tagName !== 'A') return;
-  
-    // Update <main> content and hide submenu
-    document.querySelector('main h1').textContent = event.target.textContent;
-    subMenuEl.style.top = '0'; // Hide submenu after selection
-  
-    // Remove active class from top menu links
-    topMenuEl.querySelectorAll('a').forEach(link => link.classList.remove('active'));
-  });
+});
